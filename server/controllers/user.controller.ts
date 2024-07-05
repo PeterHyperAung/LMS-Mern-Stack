@@ -6,9 +6,9 @@ import { AppError } from "../utils/AppError";
 import { catchAsync } from "../utils/catchAsync";
 import jwt from "jsonwebtoken";
 import ejs from "ejs";
-import { mailer } from "../utils/Mail";
+import { Mailer } from "../utils/Mail";
 
-interface IRegistrationBody {
+export interface IRegistrationBody {
   name: string;
   email: string;
   password: string;
@@ -54,12 +54,10 @@ export const registrationUser = catchAsync(
     const activationCode = activationToken.activationCode;
 
     const data = { user: { name }, activationCode };
-    const html = await ejs.renderFile(
-      path.join(__dirname, "../mailTemplates/activation-mail.ejs"),
-      data
-    );
 
-    await mailer.sendActivationEmail(email, activationCode);
+    const mailer = new Mailer();
+    await mailer.sendActivationEmail(email, { activationCode, user: userData });
+    console.log(activationToken.token);
 
     res.status(201).json({
       success: true,
