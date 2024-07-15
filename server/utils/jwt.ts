@@ -13,7 +13,7 @@ interface ITokenOptions {
   sameSite: "lax" | "strict" | "none" | undefined;
   secure?: boolean;
 }
-type UserReponseType = { password: string | undefined } & Omit<
+type UserReponseType = { password?: string | undefined } & Omit<
   IUser,
   "password"
 >;
