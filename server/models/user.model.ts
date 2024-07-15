@@ -1,10 +1,12 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 const validateEmail = (email: string) =>
   /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
 
 export interface IUser extends mongoose.Document {
+  _id: Schema.Types.ObjectId;
   name: string;
   email: string;
   password: string;
@@ -13,9 +15,11 @@ export interface IUser extends mongoose.Document {
     url: string;
   };
   role: string;
-  isVerified: boolean;
+  isActivated: boolean;
   courses: Array<{ courseId: string }>;
   comparePassword: (password: string) => Promise<boolean>;
+  signAccessToken: () => string;
+  signRefreshToken: () => string;
 }
 
 const userSchema: mongoose.Schema<IUser> = new mongoose.Schema(
@@ -49,7 +53,7 @@ const userSchema: mongoose.Schema<IUser> = new mongoose.Schema(
       type: String,
       default: "user",
     },
-    isVerified: {
+    isActivated: {
       type: Boolean,
       default: false,
     },
@@ -74,6 +78,20 @@ userSchema.pre<IUser>("save", async function (next) {
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });
+
+// sign access token
+userSchema.methods.signAccessToken = function () {
+  return jwt.sign({ id: this._id }, process.env.ACCESS_TOKEN_SECRET || "", {
+    expiresIn: "5m",
+  });
+};
+
+// sign refresh token
+userSchema.methods.signRefreshToken = function () {
+  return jwt.sign({ id: this._id }, process.env.REFRESH_TOKEN_SECRET || "", {
+    expiresIn: "7d",
+  });
+};
 
 userSchema.methods.comparePassword = async function (
   enteredPassword: string

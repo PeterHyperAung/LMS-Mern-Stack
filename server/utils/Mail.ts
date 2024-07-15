@@ -2,7 +2,7 @@ import path from "path";
 
 import nodemailer from "nodemailer";
 import ejs from "ejs";
-import { IRegistrationBody } from "../controllers/user.controller";
+import { IRegistrationBody } from "../controllers/auth.controller";
 
 interface EmailOptions<T> {
   email: string;
