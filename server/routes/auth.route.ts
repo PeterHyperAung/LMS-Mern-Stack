@@ -3,6 +3,7 @@ import {
   activateUser,
   loginUser,
   logoutUser,
+  oAuthHandler,
   registrationUser,
   updateAccessToken,
 } from "../controllers/auth.controller";
@@ -18,7 +19,7 @@ router.post("/register", registrationUser);
 router.post("/activate", activateUser);
 router.post("/login", loginRateLimiter, loginUser);
 router.get("/logout", isAuthenticated, logoutUser);
-router.get("/refreshtoken", updateAccessToken);
-router.get("/me", isAuthenticated, getUserById);
+router.post("/refreshtoken", updateAccessToken);
+router.post("/oauth", oAuthHandler);
 
 export { router as authRouter };

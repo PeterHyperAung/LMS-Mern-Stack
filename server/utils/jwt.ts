@@ -4,6 +4,7 @@ config();
 import { Response } from "express";
 import { IUser } from "../models/user.model";
 import { redis } from "./redis";
+import { sanitizeUserResponse } from "./sanitize";
 
 interface ITokenOptions {
   expires: Date;
@@ -61,7 +62,7 @@ export const sendToken = (
   user.password = undefined;
   res.status(statusCode).json({
     status: "success",
-    user,
+    user: sanitizeUserResponse(user),
     accessToken,
     refreshToken,
   });

@@ -3,6 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { errorMiddleware } from "./middleware/error.middleware";
 import { authRouter } from "./routes/auth.route";
+import { userRouter } from "./routes/user.route";
 
 export const app = express();
 
@@ -18,6 +19,7 @@ app.get("/test", (req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/users", userRouter);
 
 // Error route
 app.use(errorMiddleware);

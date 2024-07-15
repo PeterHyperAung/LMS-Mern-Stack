@@ -212,3 +212,24 @@ export const updateAccessToken = catchAsync(
     });
   }
 );
+
+interface IOAuthBody {
+  name: string;
+  email: string;
+  avatar: string;
+}
+
+export const oAuthHandler = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email, name, avatar } = req.body as IOAuthBody;
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await User.create({
+        email,
+        name,
+        avatar,
+      });
+    }
+    sendToken(user, 200, res);
+  }
+);
